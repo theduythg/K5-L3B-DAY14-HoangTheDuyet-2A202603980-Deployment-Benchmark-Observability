@@ -362,4 +362,4 @@ Bài này được làm **chủ yếu bằng trợ lý AI**, theo yêu cầu "l�
 
 **Lỗi trong bản nháp của AI, phát hiện khi đối chiếu:** ghi một URL deploy chưa hề được tạo; ghi image develop "~1050 MB" khi chưa đo (thực tế 1,67 GB); AI log ghi người học tự viết code; mô tả sai base image và pipeline Cloud Run; số liệu scaling cho thấy gần như không khác nhau giữa 1 và 3 instance, đo lại có kiểm số instance thì khác rõ. Các nội dung này đã được bỏ hoặc đo lại.
 
-**Phần người học tự sửa và tự kiểm tra:** tại thời điểm AI viết file này **chưa có**. Người học cần xem lại và cập nhật mục này đúng với việc đã tự làm trước khi nộp.
+**Phần người học thực hiện (theo người học cho biết):** phần việc trước khi Antigravity tiếp nhận do người học thực hiện, có sử dụng Codex hỗ trợ. Trong các giai đoạn sau, người học giao việc cho công cụ AI, đăng nhập Railway và cấp quyền để deploy, mở dashboard để chụp ảnh, yêu cầu push bài và nộp link trên LMS.
