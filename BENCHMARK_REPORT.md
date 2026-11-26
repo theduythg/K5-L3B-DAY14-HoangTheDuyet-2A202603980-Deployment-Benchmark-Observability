@@ -90,7 +90,7 @@ Gate cuối chạy với `--min-accuracy 1.0 --baseline reports/eval_v2.json`. L
 1. Lúc bình thường p95 khoảng 0,29 s, avg trên dashboard khoảng 0,2–0,25 s, p50 khoảng 0,2 s, còn p99 gần 1,8 s. avg và p95 gần nhau nghĩa là đa số request ổn định; khoảng cách lớn tới p99 cho thấy có một đuôi nhỏ rất chậm mà avg không thể hiện.
 2. Khi cả 3 instance khoẻ, các đường trên panel "Requests/s theo instance" gần trùng nhau (khoảng 2 req/s mỗi instance): Nginx chia tương đối đều.
 3. Input lớn hơn output (ví dụ một request: 81 và 46 token) vì v2 ghép context truy xuất được vào prompt.
-4. `/metrics` qua Nginx trả 404 theo cấu hình `location = /metrics` (đọc từ `nginx.conf`), để không lộ thông tin nội bộ ra ngoài. Prometheus scrape thẳng từng instance trong mạng Docker.
+4. `/metrics` qua Nginx trả **404** (đã gọi thử, trong khi `/health` trả 200) do cấu hình `location = /metrics`, để không lộ thông tin nội bộ ra ngoài. Prometheus scrape thẳng từng instance trong mạng Docker.
 
 ### 4.2 Thí nghiệm "phá hệ thống"
 
@@ -107,6 +107,8 @@ Cách đo: tải nền 10 user Locust, 3 instance. Thời gian tính từ lúc *
 **Lưu ý về độ sạch của dữ liệu:** ở baseline của D, `LLMCostBurnRateHigh` còn firing từ thí nghiệm C. Nguyên nhân có khả năng là `--force-recreate` giữ lại volume dữ liệu của Prometheus, nên cửa sổ `rate(...[5m])` vẫn còn số liệu cũ. Vì vậy ở D chỉ tính `AgentInstanceDown`. Tương tự, baseline của E còn `AgentHighLatencyP95` ở trạng thái `pending` (p95 1,52 s); alert này không chuyển sang firing và p95 sau đó là 0,27 s.
 
 **Thí nghiệm E không làm alert nào firing. Phát hiện loại sự cố này thế nào?** Latency, error rate và cost không đo được câu trả lời đúng hay sai. Cần đo chất lượng trực tiếp: (1) chạy eval golden dataset trong CI để chặn trước khi deploy (v1 chỉ đạt 4,35 %); (2) chạy eval định kỳ trên môi trường thật, đẩy accuracy thành metric và đặt alert; (3) chấm mẫu traffic thật (người chấm hoặc LLM-as-judge) và theo dõi feedback người dùng. Tín hiệu gián tiếp như output token giảm một nửa, panel phiên bản đổi sang v1, hay mất span `agent.retrieve_context` giúp phát hiện sớm nhưng không thay được eval.
+
+Unit test cho alert rules (`promtool test rules alert_rules_test.yml`): `SUCCESS`.
 
 ### 4.3 Debug bằng trace
 

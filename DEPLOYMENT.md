@@ -17,6 +17,8 @@ Railway: project `day14-production-agent`, gồm service `agent` (build từ `06
 | `POST /ask` với `question` rỗng | 422 |
 | Gọi liên tiếp quá 10 request/phút | 429 |
 
+Kiểm tra lại lúc 20:35 cùng ngày: `/health` 200, `/ready` 200, `/ask` không key 401, có key 200.
+
 Cost guard (402) được kiểm bằng `check_production_ready.py` trên máy, chưa thử trên cloud.
 
 ## Test Commands

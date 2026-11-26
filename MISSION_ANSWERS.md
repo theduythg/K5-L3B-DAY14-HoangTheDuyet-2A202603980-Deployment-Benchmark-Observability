@@ -228,6 +228,41 @@ referrer-policy: strict-origin-when-cross-origin
 ```
 
 ### Exercise 4.4: Cost guard
+**Cài đặt theo yêu cầu của đề** (mỗi user 10 USD/tháng, lưu trong Redis, reset đầu tháng). Đây là lời giải bài tập, tách riêng khỏi code Part 6:
+
+```python
+MONTHLY_BUDGET_USD = 10.0
+
+# Kiểm tra và cộng tiền trong một script Lua nên không bị race condition
+_RESERVE = """
+local spent = tonumber(redis.call('GET', KEYS[1]) or '0')
+if spent + tonumber(ARGV[1]) > tonumber(ARGV[2]) then return 0 end
+redis.call('INCRBYFLOAT', KEYS[1], ARGV[1])
+redis.call('EXPIRE', KEYS[1], ARGV[3])
+return 1
+"""
+
+
+def check_budget(r, user_id: str, estimated_cost: float) -> bool:
+    """True nếu còn ngân sách (và đã giữ chỗ số tiền), False nếu vượt."""
+    month = datetime.now(timezone.utc).strftime("%Y-%m")  # sang tháng mới → key mới
+    key = f"budget:{user_id}:{month}"
+    return r.eval(_RESERVE, 1, key, estimated_cost, MONTHLY_BUDGET_USD, 32 * 24 * 3600) == 1
+```
+
+Khác gợi ý trong đề: đề đọc `GET` rồi mới `INCRBYFLOAT`, nên nhiều request đồng thời có thể cùng vượt ngân sách. Ở đây hai bước nằm trong một script Lua. Test với Redis 7 thật:
+
+```text
+alice 6.0 -> True
+alice 4.0 -> True (vừa đúng 10 USD)
+alice 0.01 -> False (vượt)
+bob 0.01 -> True (user khác, ngân sách riêng)
+200 request đồng thời, mỗi request 1 USD -> được phép 10
+budget:carol:2026-11 = 10 | TTL > 0: True
+```
+
+**So với các bản có sẵn:**
+
 - **Ví dụ Part 4** giữ usage trong RAM: 1 USD/ngày cho mỗi user, 10 USD/ngày toàn hệ thống, cảnh báo ở 80%. Usage sau lần test: `{"user_id":"student","date":"2026-11-26","requests":10,"input_tokens":40,"output_tokens":312,"cost_usd":0.000193,"budget_usd":1.0,"budget_remaining_usd":0.999807,"budget_used_pct":0.0}`
 - **Part 6** (`06-lab-complete/app/cost_guard.py`) lưu tổng chi phí trong Redis theo key `agent:cost:<ngày UTC>`, ngân sách chung `DAILY_BUDGET_USD` (mặc định 1 USD). `check_budget()` chặn bằng **402** khi đã đạt ngân sách. Sau khi gọi mock LLM, `record_cost()` cộng dồn bằng `INCRBYFLOAT` (atomic), TTL 2 ngày. Redis lỗi thì trả 503.
 - **Hạn chế:** bước kiểm tra và bước cộng tiền tách rời, nên các request đồng thời có thể cùng vượt ngân sách một chút. Ngân sách đang tính chung, chưa tách theo user.
@@ -294,7 +329,9 @@ Chạy bản đầy đủ có Docker: **43/43 checks, 12/12 tiêu chí**. Image 
   🎉 PASS 12/12 — PRODUCTION READY! Deploy nào!
 ```
 
-Tiêu chí 12 chỉ kiểm tra file config và biến `PORT`, **không** chứng minh app đã được deploy.
+Khi chạy bản đầy đủ này, tiêu chí 12 chỉ kiểm tra file config và biến `PORT`. Ngoài ra:
+- Clone sạch nhánh `main` từ GitHub rồi chạy lại bản đầy đủ: 12/12, 43/43.
+- `check_production_ready.py --skip-docker --public-url <URL>`: `GET <URL>/health` → 200 (chế độ này bỏ qua phần Docker).
 
 ## AI Log
 
@@ -304,7 +341,7 @@ Bài này được làm **chủ yếu bằng trợ lý AI**, theo yêu cầu "l�
 |---|---|---|
 | Codex | Phiên đầu tiên (không có log chi tiết) | Bắt đầu làm bài, để dở |
 | Antigravity CLI | "Tiếp tục làm những gì Codex làm dở" | Kiểm tra Part 6, chạy load test và eval, thêm 2 mục vào `KNOWLEDGE_BASE`, sửa Dockerfile của stack observability, viết nháp tài liệu |
-| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
+| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), viết và test lời giải Exercise 4.4, rà lại theo tiêu chí chấm, chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
 
 **Cách kiểm tra:** output lấy từ lệnh chạy thật; số liệu đối chiếu với JSON, CSV và dữ liệu Prometheus; code Part 6 kiểm bằng script chấm.
 
