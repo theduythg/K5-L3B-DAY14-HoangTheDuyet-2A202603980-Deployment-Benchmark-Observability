@@ -86,6 +86,8 @@ Gate cuối chạy với `--min-accuracy 1.0 --baseline reports/eval_v2.json`. L
 
 Ảnh được chụp khi bật đồng thời `MOCK_ERROR_RATE=0.2`, `MOCK_SLOW_RATE=0.3` và pause 1 trong 3 instance.
 
+**Đọc dashboard trong ảnh** (đang bật lỗi): traffic 5,0 req/s; error rate 20,00 % (khớp `MOCK_ERROR_RATE=0.2`, vượt ngưỡng 5 %); latency p95 1,86 s (vượt ngưỡng 1 s do `MOCK_SLOW_RATE=0.3`); còn 2 instance up. Panel theo instance cho thấy đường của instance bị pause (`172.22.0.7`) tụt rồi mất, hai instance còn lại tăng lên khoảng 2,5 req/s mỗi instance.
+
 **Câu hỏi Exercise 7.4** (3 instance, 10 user Locust; không phải 2 instance, 30 user như đề gợi ý):
 1. Lúc bình thường p95 khoảng 0,29 s, avg trên dashboard khoảng 0,2–0,25 s, p50 khoảng 0,2 s, còn p99 gần 1,8 s. avg và p95 gần nhau nghĩa là đa số request ổn định; khoảng cách lớn tới p99 cho thấy có một đuôi nhỏ rất chậm mà avg không thể hiện.
 2. Khi cả 3 instance khoẻ, các đường trên panel "Requests/s theo instance" gần trùng nhau (khoảng 2 req/s mỗi instance): Nginx chia tương đối đều.

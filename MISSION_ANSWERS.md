@@ -304,7 +304,22 @@ State để trong RAM thì mỗi instance giữ một bản riêng: request sau 
 | Đủ 3 instance | `81f0d6`, `4dc795`, `a16084` | Đủ 10 message |
 | Sau `docker stop` agent-1 | `81f0d6`, `a16084` | Đủ 10 message |
 
-Khi một instance dừng, traffic chuyển sang hai instance còn lại. History giữ đủ dù request đi qua nhiều instance, vì nằm trong Redis. Lượt thứ hai tạo session mới, nên chưa kiểm chứng việc tiếp tục một session cũ sau khi instance chết.
+Khi một instance dừng, traffic chuyển sang hai instance còn lại. Hai lượt trên mỗi lượt tạo một session mới, nên mình test thêm việc **tiếp tục đúng session cũ**: gửi 3 request, dừng instance vừa phục vụ request thứ 3, rồi gửi tiếp 3 request cùng `session_id`:
+
+```text
+  (0.2s) request 1: served_by=instance-494cca storage=redis
+  (0.1s) request 2: served_by=instance-de3fa3 storage=redis
+  (0.1s) request 3: served_by=instance-4324e4 storage=redis
+stopped k5-day14-scaling-agent-3 (instance-4324e4)
+  (0.1s) request 4: served_by=instance-494cca storage=redis
+  (0.1s) request 5: served_by=instance-de3fa3 storage=redis
+  (38.8s) request 6: served_by=instance-494cca storage=redis
+same session: history count=12 user messages=['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5', 'Question 6']
+```
+
+**Kết quả:** session cũ tiếp tục được trên instance khác, đủ 12 message, instance đã dừng không phục vụ thêm.
+
+**Điểm chưa tốt:** request 6 mất 38,8 giây. Log Nginx ghi `connect() failed (113: Host is unreachable) while connecting to upstream`: Nginx vẫn gửi tới IP của instance đã chết rồi mới chuyển sang instance khác. Ở một lần chạy trước, client đặt timeout 20 giây đã bị hết giờ. `nginx.conf` của bài này không đặt `proxy_connect_timeout` (mặc định 60 giây) và `upstream` không phân giải lại DNS. `nginx.conf` của stack Part 7 đặt `proxy_connect_timeout 2s` và dùng `resolve`; mình chưa đo lại bài này với hai thiết lập đó.
 
 ## Part 6: Output `check_production_ready.py`
 
@@ -341,7 +356,7 @@ Bài này được làm **chủ yếu bằng trợ lý AI**, theo yêu cầu "l�
 |---|---|---|
 | Codex | Phiên đầu tiên (không có log chi tiết) | Bắt đầu làm bài, để dở |
 | Antigravity CLI | "Tiếp tục làm những gì Codex làm dở" | Kiểm tra Part 6, chạy load test và eval, thêm 2 mục vào `KNOWLEDGE_BASE`, sửa Dockerfile của stack observability, viết nháp tài liệu |
-| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), viết và test lời giải Exercise 4.4, rà lại theo tiêu chí chấm, chụp cửa sổ dashboard Railway (người học mở sẵn) và cửa sổ terminal chạy 4 lệnh, chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
+| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), viết và test lời giải Exercise 4.4, test tiếp tục session cũ ở Exercise 5.5, rà lại theo tiêu chí chấm, chụp cửa sổ dashboard Railway (người học mở sẵn) và cửa sổ terminal chạy 4 lệnh, chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
 
 **Cách kiểm tra:** output lấy từ lệnh chạy thật; số liệu đối chiếu với JSON, CSV và dữ liệu Prometheus; code Part 6 kiểm bằng script chấm.
 
