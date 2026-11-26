@@ -350,8 +350,6 @@ Khi chạy bản đầy đủ này, tiêu chí 12 chỉ kiểm tra file config v
 
 ## AI Log
 
-Bài này được làm **chủ yếu bằng trợ lý AI**, theo yêu cầu "làm tiếp / làm hết" của người học.
-
 | Công cụ | Người học yêu cầu | AI đã làm |
 |---|---|---|
 | Codex | Phiên đầu tiên (không có log chi tiết) | Bắt đầu làm bài, để dở |
