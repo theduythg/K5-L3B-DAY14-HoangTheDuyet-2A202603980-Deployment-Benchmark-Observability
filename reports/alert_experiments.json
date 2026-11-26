@@ -1,0 +1,120 @@
+{
+  "A": {
+    "change": "MOCK_ERROR_RATE=0.2",
+    "baseline": {
+      "alerts": {},
+      "metrics": {
+        "rps": 6.318514134695996,
+        "error_ratio": 0.010059750518308257,
+        "p95_s": 0.29372550075228715,
+        "cost_per_hour": 0.270726706592165,
+        "output_tokens_per_s": 247.59839622491342
+      }
+    },
+    "fired_after_s": {
+      "AgentHighErrorRate": 90
+    },
+    "metrics_after": {
+      "rps": 6.309587146924292,
+      "error_ratio": 0.2536025330525864,
+      "p95_s": 0.29735948947611446,
+      "cost_per_hour": 0.5425393581503827,
+      "output_tokens_per_s": 187.72381174622748
+    }
+  },
+  "B": {
+    "change": "MOCK_SLOW_RATE=0.3",
+    "baseline": {
+      "alerts": {},
+      "metrics": {
+        "rps": 6.309664514955905,
+        "error_ratio": 0.008645533141210375,
+        "p95_s": 0.29788288288288284,
+        "cost_per_hour": 0.6523935887085107,
+        "output_tokens_per_s": 247.45885989635423
+      }
+    },
+    "fired_after_s": {
+      "AgentHighLatencyP95": 140
+    },
+    "metrics_after": {
+      "rps": 4.836685311009757,
+      "error_ratio": 0.0037594218814800164,
+      "p95_s": 1.9076388103206359,
+      "cost_per_hour": 0.6174035494468858,
+      "output_tokens_per_s": 189.66715424078575
+    }
+  },
+  "C": {
+    "change": "LLM_MODEL=mock-llm-large",
+    "baseline": {
+      "alerts": {},
+      "metrics": {
+        "rps": 6.309320670924576,
+        "error_ratio": 0.0,
+        "p95_s": 0.2926731825911856,
+        "cost_per_hour": 0.620756002131956,
+        "output_tokens_per_s": 254.4092205555043
+      }
+    },
+    "fired_after_s": {
+      "LLMCostBurnRateHigh": 180
+    },
+    "metrics_after": {
+      "rps": 5.436725313720688,
+      "error_ratio": 0.01003344623975637,
+      "p95_s": 0.6567705953925961,
+      "cost_per_hour": 8.304107126891989,
+      "output_tokens_per_s": 213.46869483831023
+    }
+  },
+  "D": {
+    "change": "docker pause agent-1",
+    "baseline": {
+      "alerts": {
+        "LLMCostBurnRateHigh": "firing"
+      },
+      "metrics": {
+        "rps": 6.182005296733641,
+        "error_ratio": 0.008823529726342393,
+        "p95_s": 0.29661116496302464,
+        "cost_per_hour": 7.507162013622574,
+        "output_tokens_per_s": 244.66199434868454
+      }
+    },
+    "fired_after_s": {
+      "LLMCostBurnRateHigh": 0,
+      "AgentInstanceDown": 40
+    },
+    "metrics_after": {
+      "rps": 5.618437698068212,
+      "error_ratio": 0.01618119892346984,
+      "p95_s": 0.2980921296755957,
+      "cost_per_hour": 4.497313299458493,
+      "output_tokens_per_s": 218.53725303582195
+    }
+  },
+  "E": {
+    "change": "AGENT_VERSION=v1",
+    "baseline": {
+      "alerts": {
+        "AgentHighLatencyP95": "pending"
+      },
+      "metrics": {
+        "rps": 5.927667795361719,
+        "error_ratio": 0.012269901694542219,
+        "p95_s": 1.5205901243599902,
+        "cost_per_hour": 0.6956870533636618,
+        "output_tokens_per_s": 233.1791818799582
+      }
+    },
+    "fired_after_s": {},
+    "metrics_after": {
+      "rps": 6.0568941343281315,
+      "error_ratio": 0.018018019986363175,
+      "p95_s": 0.2674986812906986,
+      "cost_per_hour": 0.4333990832530965,
+      "output_tokens_per_s": 116.954450658794
+    }
+  }
+}
