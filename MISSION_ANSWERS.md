@@ -231,6 +231,8 @@ referrer-policy: strict-origin-when-cross-origin
 **Cài đặt theo yêu cầu của đề** (mỗi user 10 USD/tháng, lưu trong Redis, reset đầu tháng). Đây là lời giải bài tập, tách riêng khỏi code Part 6:
 
 ```python
+from datetime import datetime, timezone
+
 MONTHLY_BUDGET_USD = 10.0
 
 # Kiểm tra và cộng tiền trong một script Lua nên không bị race condition
