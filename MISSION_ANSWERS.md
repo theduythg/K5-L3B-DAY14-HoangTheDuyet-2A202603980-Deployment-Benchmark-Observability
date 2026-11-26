@@ -341,7 +341,7 @@ Bài này được làm **chủ yếu bằng trợ lý AI**, theo yêu cầu "l�
 |---|---|---|
 | Codex | Phiên đầu tiên (không có log chi tiết) | Bắt đầu làm bài, để dở |
 | Antigravity CLI | "Tiếp tục làm những gì Codex làm dở" | Kiểm tra Part 6, chạy load test và eval, thêm 2 mục vào `KNOWLEDGE_BASE`, sửa Dockerfile của stack observability, viết nháp tài liệu |
-| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), viết và test lời giải Exercise 4.4, rà lại theo tiêu chí chấm, chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
+| Claude Code | "Làm tiếp và làm hết" | Sửa `render.yaml`, thêm metric `agent_question_length_chars`, chạy thí nghiệm A–E, đo lại scaling, chụp ảnh, deploy lên Railway (người học đăng nhập và cấp quyền cho CLI), viết và test lời giải Exercise 4.4, rà lại theo tiêu chí chấm, chụp cửa sổ dashboard Railway (người học mở sẵn) và cửa sổ terminal chạy 4 lệnh, chạy lại script chấm và bài tập Part 1, 2, 4, 5, viết lại ba file báo cáo, commit và push |
 
 **Cách kiểm tra:** output lấy từ lệnh chạy thật; số liệu đối chiếu với JSON, CSV và dữ liệu Prometheus; code Part 6 kiểm bằng script chấm.
 

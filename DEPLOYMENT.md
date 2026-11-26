@@ -48,5 +48,5 @@ Ghi chú: Railway CLI cảnh báo cấu hình bằng `railway.toml` sắp bị t
 
 ## Screenshots
 - [Service running](screenshots/running.png): trang `/docs` mở từ URL public
-- [Test results](screenshots/test.png): dựng từ output thật của 4 lệnh curl
-- [Deployment status](screenshots/dashboard.png): dựng từ output `railway service list`, không phải ảnh chụp trang dashboard web
+- [Test results](screenshots/test.png): ảnh chụp cửa sổ Git Bash chạy 4 lệnh tự kiểm (21:13 ngày 2026-11-26), API key không hiển thị
+- [Deployment dashboard](screenshots/dashboard.png): ảnh chụp trang dashboard Railway, `agent` và `Redis` Online, giá trị biến được che
